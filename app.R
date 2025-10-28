@@ -8,6 +8,7 @@ library(colourpicker)
 library(viridis)
 library(dplyr)
 
+options(shiny.maxRequestSize = 100*1024^2)  # 100 MB limit
 
 
 # source modules
