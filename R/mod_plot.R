@@ -43,6 +43,13 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                     grp <- if (!is.null(col)) col else NULL
                     ggplot(df, aes_string(x = x, y = y, color = col, group = grp)) + geom_line() + geom_point()
                   },
+                  "Tile" = {
+                    if (is.null(y)) stop("Tile plot needs a Y variable")
+                      df %>%
+                          select(all_of(c(x, y, col))) %>%
+                          na.omit() %>%
+                            ggplot(aes_string(x = x, y = y, fill = col)) + geom_tile()
+                  },
                   ggplot(df, aes_args) + geom_point()
       )
 

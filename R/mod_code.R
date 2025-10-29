@@ -27,6 +27,7 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                           "Histogram" = paste0("geom_histogram(bins = 30)"),
                           "Bar" = "geom_bar(position = \"dodge\")",
                           "Line" = "geom_line() + geom_point()",
+                          "Tile" = "geom_tile()",
                           "geom_point()")
       lines <- c(lines, paste0("p <- ggplot(", dfname, ", ", aes_line, ") + ", geom_line))
       # facets
