@@ -121,31 +121,52 @@ ui <- fluidPage(
         ),
 
         div(class = "app-body",
-  fluidRow(
-    column(width = 3,
-           wellPanel(
-             h4("Data & Mapping"),
-             mod_data_ui("data"),
-             hr(),
-             mod_mapping_ui("map"),
-             hr(),
-             selectInput("plottype", "Plot type:", 
-                         choices = c("Scatter", "Boxplot", "Histogram", "Bar", "Line", "Tile")),
-             checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
-             conditionalPanel(
-               condition = "input.convert_var == true",
-               uiOutput("convert_ui")
-             )
-           )
-    ),
-    column(width = 6,
-           wellPanel(
-               tabsetPanel(
-                   tabPanel("Plot", mod_plot_ui("plot")),
-                   tabPanel("Code", mod_code_ui("code")),
-                   tabPanel("Data", DT::dataTableOutput("data_preview"))
-               )
-           )
+
+            div(class = "main-panels",
+                div(class = "panel panel-left",
+                    wellPanel(
+                        h4("Data & Mapping"),
+                        mod_data_ui("data"),
+                        hr(),
+                        mod_mapping_ui("map"),
+                        hr(),
+                        selectInput("plottype", "Plot type:", 
+                                    choices = c("Scatter", "Boxplot", "Histogram", "Bar", "Line", "Tile")),
+                        checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
+                        conditionalPanel(
+                            condition = "input.convert_var == true",
+                            uiOutput("convert_ui")
+                        )
+                    )
+                ),
+                div(class = "panel panel-center",
+                    wellPanel(
+                        tabsetPanel(
+                            tabPanel("Plot", mod_plot_ui("plot")),
+                            tabPanel("Interactive", plotly::plotlyOutput("plot_interactive")),
+                            tabPanel("Code", mod_code_ui("code")),
+                            tabPanel("Data", DT::dataTableOutput("data_preview"))
+                        )
+                    )
+                ),
+                div(class = "panel panel-right",
+                    wellPanel(
+                        h4("Aesthetics & Styling"),
+                        mod_style_ui("style"),
+                        hr(),
+                        mod_export_ui("export")
+                    )
+                ),
+            )
+            
+    # column(width = 6,
+    #        wellPanel(
+    #            tabsetPanel(
+    #                tabPanel("Plot", mod_plot_ui("plot")),
+    #                tabPanel("Code", mod_code_ui("code")),
+    #                tabPanel("Data", DT::dataTableOutput("data_preview"))
+    #            )
+    #        )
            
            
            # wellPanel(
