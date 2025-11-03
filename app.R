@@ -232,6 +232,14 @@ server <- function(input, output, session) {
   mod_code_server("code", data_for_mapping, mapping_r, reactive(input$plottype), style_r)
   mod_export_server("export", plot_r)
 
+  
+  # render interactive plotly from the plot reactive
+  output$plot_interactive <- plotly::renderPlotly({
+      req(plot_r())
+      plotly::ggplotly(plot_r(), height = 600)
+  })
+  
+  
   output$data_preview <- DT::renderDataTable({
     req(data_for_mapping())
     head(data_for_mapping(), 100)
