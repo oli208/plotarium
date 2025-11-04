@@ -18,23 +18,26 @@ mod_mapping_ui <- function(id) {
 }
 
 mod_mapping_server <- function(id, data_r) {
-  moduleServer(id, function(input, output, session) {
-    observeEvent(data_r(), {
-      df <- data_r()
-      vars <- names(df)
-      updateSelectInput(session, "xvar", choices = vars, selected = vars[1])
-      updateSelectInput(session, "yvar", choices = vars, selected = vars[min(2, length(vars))])
-      updateSelectInput(session, "colorvar", choices = c("None", vars), selected = "None")
-      updateSelectInput(session, "facet_row", choices = c("None", vars), selected = "None")
-      updateSelectInput(session, "facet_col", choices = c("None", vars), selected = "None")
-    }, ignoreNULL = TRUE)
-
-    reactive(list(
-      x = input$xvar,
-      y = input$yvar,
-      color = if (is.null(input$colorvar) || input$colorvar == "None") NULL else input$colorvar,
-      facet_row = if (is.null(input$facet_row) || input$facet_row == "None") NULL else input$facet_row,
-      facet_col = if (is.null(input$facet_col) || input$facet_col == "None") NULL else input$facet_col
-    ))
-  })
+    moduleServer(id, function(input, output, session) {
+        observeEvent(data_r(), {
+            df <- data_r()
+            vars <- names(df)
+            updateSelectInput(session, "xvar", choices = vars, selected = vars[1])
+            updateSelectInput(session, "yvar", choices = vars, selected = vars[min(2, length(vars))])
+            updateSelectInput(session, "colorvar", choices = c("None", vars), selected = "None")
+            updateSelectInput(session, "facet_row", choices = c("None", vars), selected = "None")
+            updateSelectInput(session, "facet_col", choices = c("None", vars), selected = "None")
+        }, ignoreNULL = TRUE)
+        
+        reactive(list(
+            x = input$xvar,
+            y = input$yvar,
+            color = if (is.null(input$colorvar) || input$colorvar == "None") NULL else input$colorvar,
+            facet_row = if (is.null(input$facet_row) || input$facet_row == "None") NULL else input$facet_row,
+            facet_col = if (is.null(input$facet_col) || input$facet_col == "None") NULL else input$facet_col,
+            show_regline = isTRUE(input$show_regline),
+            reg_method = input$reg_method,
+            show_conf = isTRUE(input$show_conf)
+        ))
+    })
 }
