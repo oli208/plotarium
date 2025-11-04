@@ -30,6 +30,14 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                           "Tile" = "geom_tile()",
                           "geom_point()")
       lines <- c(lines, paste0("p <- ggplot(", dfname, ", ", aes_line, ") + ", geom_line))
+      
+      # regression
+      if (ptype == "Scatter" && isTRUE(mapping_r()$show_regline)) {
+          method <- mapping_r()$reg_method
+          if (is.null(method) || method == "") method <- "lm"
+          lines <- c(lines, paste0("p <- p + geom_smooth(method = '", method, "', se = ", ifelse(isTRUE(mapping_r()$show_conf), "TRUE", "FALSE"), ")"))
+      }
+      
       # facets
   #    if (!is.null(fr) || !is.null(fc)) {
   #      fmla <- paste0(fr %||% ".", " ~ ", fc %||% ".")

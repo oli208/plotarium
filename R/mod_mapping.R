@@ -1,12 +1,20 @@
 mod_mapping_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
-    selectInput(ns("xvar"), "X variable", choices = NULL),
-    selectInput(ns("yvar"), "Y variable", choices = NULL),
-    selectInput(ns("colorvar"), "Color (optional)", choices = c("None")),
-    selectInput(ns("facet_row"), "Facet row (optional)", choices = c("None")),
-    selectInput(ns("facet_col"), "Facet column (optional)", choices = c("None"))
-  )
+    ns <- NS(id)
+    tagList(
+
+        selectInput(ns("xvar"), "X variable", choices = NULL),
+        selectInput(ns("yvar"), "Y variable", choices = NULL),
+        selectInput(ns("colorvar"), "Color", choices = c("None")),
+        selectInput(ns("facet_row"), "Facet row", choices = c("None")),
+        selectInput(ns("facet_col"), "Facet column", choices = c("None")),
+        conditionalPanel("input.plottype == 'Scatter'",
+                         checkboxInput(ns("show_regline"), "Show regression line", value = FALSE),
+                         conditionalPanel("input.show_regline == true", ns = ns,
+                                          selectInput(ns("reg_method"), "Regression method:", choices = c("lm","loess"), selected = "lm"),
+                                          checkboxInput(ns("show_conf"), "Show confidence interval", value = TRUE)
+                         )
+        )
+    )
 }
 
 mod_mapping_server <- function(id, data_r) {

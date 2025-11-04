@@ -25,7 +25,17 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
 
       # build base plot by type
       p <- switch(ptype,
-                  "Scatter" = ggplot(df, aes_args) + geom_point(),
+                  "Scatter" = {
+                  # add regression line
+                  p0 <- ggplot(df, aes_string(x = x, y = y, color = col))
+                  p0 <- p0 + geom_point()
+                  if (isTRUE(mapping_r()$show_regline)) {
+                      method <- mapping_r()$reg_method
+                      if (is.null(method) || method == "") method <- "lm"
+                      p0 <- p0 + geom_smooth(method = method, se = isTRUE(mapping_r()$show_conf))
+                  }
+                  p0
+                  },
                   "Boxplot" = {
                     if (is.null(y)) stop("Boxplot needs a Y variable")
                     ggplot(df, aes_string(x = x, y = y, color = col)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.15, height = 0, alpha = 0.6)
