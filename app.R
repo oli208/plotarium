@@ -137,7 +137,8 @@ ui <- fluidPage(
                         conditionalPanel(
                             condition = "input.convert_var == true",
                             uiOutput("convert_ui")
-                        )
+                        ),
+                        checkboxInput("lazy_render", "Enable lazy rendering for large data (>10k rows)", value = TRUE)
                     )
                 ),
                 div(class = "panel panel-center",
@@ -223,6 +224,13 @@ server <- function(input, output, session) {
       } else {
         df[[sel]] <- as.factor(df[[sel]])
       }
+    }
+    # lazy rendering: if enabled and df large, return sampled df for plotting only (actual data preview still full)
+    if (isTRUE(input$lazy_render) && nrow(df) > 10000) {
+        shiny::showNotification("Data > 10,000 rows: using 10,000-row sample for plotting.", type = "message", duration = 3)
+        df_sample <- df[sample(seq_len(nrow(df)), 10000), , drop = FALSE]
+        attr(df_sample, "__sampled") <- TRUE
+        return(df_sample)
     }
     df
   })
