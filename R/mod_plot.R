@@ -20,6 +20,18 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
       facet_col <- mapping_r()$facet_col
       ptype <- plottype_r()
       st <- style_r()
+            # theme and text sizes (axis title/text sizes apply to text only)
+            if (isTRUE(st$theme_enabled) && !is.null(st$theme)) {
+                theme_fun <- match.fun(st$theme)
+                p <- p + theme_fun()
+            } else {
+                p <- p + theme_minimal()
+            }
+            
+            if(isTRUE(st$axis_text_sizes_enabled)){
+                p <- p + theme(axis.title = element_text(size = st$axis_title_size),
+                               axis.text = element_text(size = st$axis_text_size))
+            }
 
       aes_args <- if (!is.null(col)) aes_string(x = x, y = y, color = col) else aes_string(x = x, y = y)
 
@@ -72,26 +84,6 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
         p <- p + facet_grid(as.formula(fmla))
       }
 
-      # themes & labels
-      if (isTRUE(st$theme_enabled) && !is.null(st$theme)) {
-        theme_fun <- match.fun(st$theme)
-        p <- p + theme_fun(base_size = st$base_size)
-      } else {
-        p <- p + theme_minimal(base_size = st$base_size %||% 11)
-      }
-      if (isTRUE(st$labels_enabled)) {
-        labs_args <- list()
-        if (nzchar(st$labels$title)) labs_args$title <- st$labels$title
-        if (nzchar(st$labels$x)) labs_args$x <- st$labels$x
-        if (nzchar(st$labels$y)) labs_args$y <- st$labels$y
-        p <- p + do.call(ggplot2::labs, labs_args)
-      }
-      if (isTRUE(st$legend_enabled)) {
-        p <- p + theme(legend.position = st$legend_pos)
-      } else {
-        p <- p + theme(legend.position = "none")
-      }
-
       # color scales
       if (!is.null(col)) {
         # detect if color is numeric
@@ -127,6 +119,22 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
       }
 
       p
+            # labels
+            if (isTRUE(st$labels_enabled)) {
+                labs_args <- list()
+                if (!is.null(st$labels$title) && nzchar(st$labels$title)) labs_args$title <- st$labels$title
+                if (!is.null(st$labels$x) && nzchar(st$labels$x)) labs_args$x <- st$labels$x
+                if (!is.null(st$labels$y) && nzchar(st$labels$y)) labs_args$y <- st$labels$y
+                if (length(labs_args) > 0) p <- p + do.call(ggplot2::labs, labs_args)
+            }
+            
+            # legend
+            if (isTRUE(st$legend_enabled) && !is.null(st$legend_pos)) {
+                p <- p + theme(legend.position = st$legend_pos)
+            } else {
+                p <- p + theme(legend.position = "none")
+            }
+            
     })
 
     output$plot <- renderPlot({

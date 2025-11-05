@@ -21,6 +21,12 @@ mod_style_ui <- function(id) {
     selectInput(ns("colorscale"), "Color scale:", choices = c("Default","Viridis","Manual"), selected = "Default"),
     conditionalPanel("input.colorscale == 'Manual'", ns = ns,
                      textInput(ns("manual_palette"), "Manual palette (comma-separated hex, e.g. #1f78b4,#33a02c)", value = "#1f78b4,#33a02c,#e31a1c")
+        checkboxInput(ns("text_sizes_cb"), "Change Font size", value = FALSE),
+        conditionalPanel("input.text_sizes_cb == true",
+            ns = ns,
+            sliderInput(ns("axis_title_size"), "Axis title size", min = 8, max = 30, value = 16),
+            sliderInput(ns("axis_text_size"), "Axis text size", min = 6, max = 24, value = 12)
+        ),
     )
   )
 }
@@ -39,4 +45,7 @@ mod_style_server <- function(id) {
       manual_palette = input$manual_palette
     ))
   })
+            axis_text_sizes_enabled = isTRUE(input$text_sizes_cb),
+            axis_title_size = input$axis_title_size,
+            axis_text_size = input$axis_text_size,
 }

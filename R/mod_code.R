@@ -43,24 +43,6 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
   #      fmla <- paste0(fr %||% ".", " ~ ", fc %||% ".")
   #      lines <- c(lines, paste0("p <- p + facet_grid(", "", fmla, """)))
   #    }
-      # theme and labels
-      if (isTRUE(st$theme_enabled) && !is.null(st$theme)) {
-        lines <- c(lines, paste0("p <- p + ", st$theme, "(base_size = ", st$base_size, ")"))
-      } else {
-        lines <- c(lines, paste0("p <- p + theme_minimal(base_size = ", st$base_size %||% 11, ")"))
-      }
-      if (isTRUE(st$labels_enabled)) {
-        labs_args <- c()
-        if (nzchar(st$labels$title)) labs_args <- c(labs_args, paste0("title = \"", st$labels$title, "\""))
-        if (nzchar(st$labels$x)) labs_args <- c(labs_args, paste0("x = \"", st$labels$x, "\""))
-        if (nzchar(st$labels$y)) labs_args <- c(labs_args, paste0("y = \"", st$labels$y, "\""))
-        lines <- c(lines, paste0("p <- p + labs(", paste(labs_args, collapse = ", "), ")"))
-      }
-      if (isTRUE(st$legend_enabled)) {
-        lines <- c(lines, paste0("p <- p + theme(legend.position = \"", st$legend_pos, "\")"))
-      } else {
-        lines <- c(lines, "p <- p + theme(legend.position = \"none\")")
-      }
       # color scale notes
       if (!is.null(col)) {
         if (st$colorscale == "Viridis") {
@@ -73,6 +55,15 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
       lines <- c(lines, "print(p)", "# ggsave('figure.png', p, width=6, height=4, dpi=300)")
       paste(lines, collapse = "\n")
                                 "Violin" = "geom_violin(trim = FALSE)",
+            # theme and labels (axis sizes)
+            lines <- c(lines, paste0("p <- p + theme_minimal() + theme(axis.title = element_text(size = ", style_r()$axis_title_size, "), axis.text = element_text(size = ", style_r()$axis_text_size, "))"))
+            if (isTRUE(st$labels_enabled)) {
+                labs_args <- c()
+                if (!is.null(st$labels$title) && nzchar(st$labels$title)) labs_args <- c(labs_args, paste0("title = \"", st$labels$title, "\""))
+                if (!is.null(st$labels$x) && nzchar(st$labels$x)) labs_args <- c(labs_args, paste0("x = \"", st$labels$x, "\""))
+                if (!is.null(st$labels$y) && nzchar(st$labels$y)) labs_args <- c(labs_args, paste0("y = \"", st$labels$y, "\""))
+                lines <- c(lines, paste0("p <- p + labs(", paste(labs_args, collapse = ", "), ")"))
+            }
     })
 
     output$code <- renderText({ code_text() })
