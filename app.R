@@ -116,7 +116,7 @@ ui <- fluidPage(
         div(class = "header-row",
             div(class = "header-title", "Plotarium"),
             div(class = "header-logos",
-                img(src = "logo_plotarium_v1.png", alt = "Logo")
+                img(src = "logo_plotarium_v2.png", alt = "Logo")
             )
         ),
 
