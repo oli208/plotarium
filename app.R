@@ -128,10 +128,11 @@ ui <- fluidPage(
                         h4("Data & Mapping"),
                         mod_data_ui("data"),
                         hr(),
+                        selectInput("plottype", "Plot type:", 
+                                    choices = c("Scatter", "Boxplot", "Violin", "Histogram", "Bar", "Line", "Tile")),
+                        
                         mod_mapping_ui("map"),
                         hr(),
-                        selectInput("plottype", "Plot type:", 
-                                    choices = c("Scatter", "Boxplot", "Histogram", "Bar", "Line", "Tile")),
                         checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         conditionalPanel(
                             condition = "input.convert_var == true",

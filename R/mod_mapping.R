@@ -13,6 +13,12 @@ mod_mapping_ui <- function(id) {
                                           selectInput(ns("reg_method"), "Regression method:", choices = c("lm","loess"), selected = "lm"),
                                           checkboxInput(ns("show_conf"), "Show confidence interval", value = TRUE)
                          )
+        ),
+        conditionalPanel("input.plottype == 'Boxplot' || input.plottype == 'Violin'",
+                         checkboxInput(ns("show_jitter"), "Show jitter points", value = FALSE),
+                         conditionalPanel("input.show_jitter == true", ns = ns,
+                                          sliderInput(ns("jitter_size"), "Point size", min = 0.5, max = 6, value = 2)
+                         )
         )
     )
 }

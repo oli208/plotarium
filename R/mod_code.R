@@ -72,6 +72,7 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
       }
       lines <- c(lines, "print(p)", "# ggsave('figure.png', p, width=6, height=4, dpi=300)")
       paste(lines, collapse = "\n")
+                                "Violin" = "geom_violin(trim = FALSE)",
     })
 
     output$code <- renderText({ code_text() })
