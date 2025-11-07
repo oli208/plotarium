@@ -22,104 +22,17 @@ source("R/mod_export.R")
 
 
 ui <- fluidPage(
-      theme = bs_theme(bootswatch = "yeti", primary = "#1f77b4"),
-    
-    tags$head(
-        tags$style(HTML("
-      /* Include padding/border in width calculation */
-      *, *::before, *::after {
-        box-sizing: border-box;
-      }
-
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden; /* Hide horizontal scroll */
-      }
-
-      .container-fluid {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .app-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-
-      .app-body {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden; /* Hide horizontal scroll */
-      }
-
-      .header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 16px;
-        border-bottom: 1px solid #ccc;
-        background-color: #ffffff;
-        flex-shrink: 0;
-        max-width: 100vw; /* prevent overflow */
-      }
-
-      .header-title {
-        font-size: 22px;
-        font-weight: 600;
-        color: #333;
-        margin: 0;
-      }
-
-      .header-logos {
-        display: flex;
-        gap: 5px;
-        max-width: 50vw;
-      }
-
-      .header-logos img {
-        height: 36px;
-        width: auto;
-        max-width: 100%;
-        display: block;
-      }
-
-      footer {
-        background-color:#f8f9fa;
-        padding: 10px 16px;
-        border-top: 1px solid #ccc;
-        text-align:center;
-        font-size:11px;
-        color:#555;
-        flex-shrink: 0;
-        max-width: 100vw;
-      }
-
-      /* Sidebar and main panel tweaks */
-      .sidebar {
-        padding-right: 0;
-      }
-
-      .main-panel {
-        padding-left: 0;
-        max-width: 100vw;
-      }
-    "))
-    ),
-
+      theme = bs_theme(bootswatch = "yeti", primary = "#0E1E37"),
+      tags$head(
+          tags$link(rel = "stylesheet", type = "text/css", href = "plotarium.css")
+      ),
      div(class = "app-wrapper",
-
         div(class = "header-row",
             div(class = "header-title", "Plotarium"),
             div(class = "header-logos",
                 img(src = "logo_plotarium_v2.png", alt = "Logo")
             )
-        ),
-
+        ),     
         div(class = "app-body",
 
             div(class = "main-panels",
@@ -132,13 +45,13 @@ ui <- fluidPage(
                                     choices = c("Scatter", "Boxplot", "Violin", "Histogram", "Bar", "Line", "Tile")),
                         
                         mod_mapping_ui("map"),
-                        hr(),
-                        checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         conditionalPanel(
                             condition = "input.convert_var == true",
                             uiOutput("convert_ui")
                         ),
+                        checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         checkboxInput("lazy_render", "Enable lazy rendering for large data (>10k rows)", value = TRUE)
+                        
                     )
                 ),
                 div(class = "panel panel-center",
@@ -160,34 +73,6 @@ ui <- fluidPage(
                     )
                 ),
             )
-            
-    # column(width = 6,
-    #        wellPanel(
-    #            tabsetPanel(
-    #                tabPanel("Plot", mod_plot_ui("plot")),
-    #                tabPanel("Code", mod_code_ui("code")),
-    #                tabPanel("Data", DT::dataTableOutput("data_preview"))
-    #            )
-    #        )
-           
-           
-           # wellPanel(
-           #   h4("Preview"),
-           #   mod_plot_ui("plot"),
-           #   br(),
-           #   tabsetPanel(
-           #     tabPanel("Code", mod_code_ui("code")),
-           #     tabPanel("Data", DT::dataTableOutput("data_preview"))
-           #   )
-           # )
-    ),
-    column(width = 3,
-           wellPanel(
-             h4("Aesthetics & Styling"),
-             mod_style_ui("style")
-           )
-    )
-  )
 ),
 tags$footer(
     HTML("For more info visit 

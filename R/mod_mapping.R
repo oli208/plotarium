@@ -7,6 +7,7 @@ mod_mapping_ui <- function(id) {
         selectInput(ns("colorvar"), "Color", choices = c("None")),
         selectInput(ns("facet_row"), "Facet row", choices = c("None")),
         selectInput(ns("facet_col"), "Facet column", choices = c("None")),
+        hr(),
         conditionalPanel("input.plottype == 'Scatter'",
                          checkboxInput(ns("show_regline"), "Show regression line", value = FALSE),
                          conditionalPanel("input.show_regline == true", ns = ns,
