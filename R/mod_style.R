@@ -31,6 +31,12 @@ mod_style_ui <- function(id) {
             ns = ns,
             textInput(ns("manual_palette"), "Manual palette (comma-separated hex, e.g. #1f78b4,#33a02c)", value = "#1f78b4,#33a02c,#e31a1c")
         ),
+        hr(),
+        h5("Export Settings"),
+        selectInput(ns("export_type"), "File type:", choices = c("PNG", "PDF", "SVG"), selected = "PNG"),
+        numericInput(ns("export_width_cm"), "Width (cm):", value = 15, min = 1),
+        numericInput(ns("export_height_cm"), "Height (cm):", value = 10, min = 1),
+        numericInput(ns("export_dpi"), "DPI:", value = 300, min = 72)
     )
 }
 
@@ -48,6 +54,7 @@ mod_style_server <- function(id) {
             legend_enabled = isTRUE(input$legend_cb),
             colorscale = input$colorscale,
             manual_palette = input$manual_palette,
+            export = list(type = input$export_type, width_cm = input$export_width_cm, height_cm = input$export_height_cm, dpi = input$export_dpi) # ,
             #        copy_code = input$copy_code
         ))
     })

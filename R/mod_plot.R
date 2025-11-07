@@ -117,23 +117,22 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                 p <- p + theme(legend.position = "none")
             }
             
+        
+        output$plot <- renderPlot({
+            p <- plot_reactive()
+            req(p)
+            print(p)
+        })
+        
+        output$download <- downloadHandler(
+            filename = function() { paste0("plot_preview.png") },
+            content = function(file) {
+                ragg::agg_png(file, width = 8, height = 6, units = "in", res = 300)
+                print(plot_reactive())
+                dev.off()
+            }
+        )
+        
+        return(plot_reactive)
     })
-
-    output$plot <- renderPlot({
-      p <- plot_reactive()
-      req(p)
-      print(p)
-    })
-
-    output$download <- downloadHandler(
-      filename = function() { paste0("plot_preview.png") },
-      content = function(file) {
-        ragg::agg_png(file, width = 8, height = 6, units = "in", res = 300)
-        print(plot_reactive())
-        dev.off()
-      }
-    )
-
-    return(plot_reactive)
-  })
 }

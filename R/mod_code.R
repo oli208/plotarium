@@ -1,9 +1,9 @@
 mod_code_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
-    verbatimTextOutput(ns("code")),
-    downloadButton(ns("download_code"), "Download R code")
-  )
+    ns <- NS(id)
+    tagList(
+        verbatimTextOutput(ns("code")),
+        downloadButton(ns("download_code"), "Download R code")
+    )
 }
 
 mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
@@ -60,15 +60,18 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                 if (!is.null(st$labels$y) && nzchar(st$labels$y)) labs_args <- c(labs_args, paste0("y = \"", st$labels$y, "\""))
                 lines <- c(lines, paste0("p <- p + labs(", paste(labs_args, collapse = ", "), ")"))
             }
+            
+            lines <- c(lines, "print(p)")
+            paste(lines, collapse = "\n")
+        })
+        
+        output$code <- renderText({ code_text() })
+        
+        output$download_code <- downloadHandler(
+            filename = function(){ "plot_code.R" },
+            content = function(file){
+                writeLines(code_text(), con = file)
+            }
+        )
     })
-
-    output$code <- renderText({ code_text() })
-
-    output$download_code <- downloadHandler(
-      filename = function(){ "plot_code.R" },
-      content = function(file){
-        writeLines(code_text(), con = file)
-      }
-    )
-  })
 }

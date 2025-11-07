@@ -124,8 +124,8 @@ server <- function(input, output, session) {
   style_r <- mod_style_server("style")
   plot_r <- mod_plot_server("plot", data_for_mapping, mapping_r, reactive(input$plottype), style_r)
   mod_code_server("code", data_for_mapping, mapping_r, reactive(input$plottype), style_r)
-  mod_export_server("export", plot_r)
-
+  mod_export_server("export", plot_r, style_r)
+  
   
   # render interactive plotly from the plot reactive
   output$plot_interactive <- plotly::renderPlotly({

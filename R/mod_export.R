@@ -1,34 +1,58 @@
 mod_export_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
-    hr(),
-    h5("Export (high quality)"),
-    textInput(ns("fname"), "Filename (without extension)", value = "figure"),
-    numericInput(ns("width"), "Width (in)", value = 6, min = 1),
-    numericInput(ns("height"), "Height (in)", value = 4, min = 1),
-    numericInput(ns("dpi"), "DPI", value = 300, min = 72),
-    downloadButton(ns("download_png"), "Download PNG"),
-    downloadButton(ns("download_pdf"), "Download PDF")
-  )
+    ns <- NS(id)
+    tagList(
+        h5("Export Plot"),
+        downloadButton(ns("export_file"), "Export using settings")
+    )
 }
 
-mod_export_server <- function(id, plot_r) {
-  moduleServer(id, function(input, output, session) {
-    output$download_png <- downloadHandler(
-      filename = function(){ paste0(input$fname, ".png") },
-      content = function(file){
-        ragg::agg_png(file, width = input$width, height = input$height, units = "in", res = input$dpi)
-        print(plot_r())
-        dev.off()
-      }
-    )
-    output$download_pdf <- downloadHandler(
-      filename = function(){ paste0(input$fname, ".pdf") },
-      content = function(file){
-        grDevices::pdf(file, width = input$width, height = input$height)
-        print(plot_r())
-        dev.off()
-      }
-    )
-  })
+mod_export_server <- function(id, plot_r, style_r) {
+    moduleServer(id, function(input, output, session) {
+        
+        output$export_file <- downloadHandler(
+            filename = function() { 
+                req(style_r())
+                st <- style_r()
+                ext <- tolower(st$export$type)
+                paste0("plot_export.", ext)
+            },
+            
+            content = function(file) {
+                req(plot_r(), style_r())
+                p <- plot_r()
+                st <- style_r()
+                
+                w <- st$export$width_cm / 2.54
+                h <- st$export$height_cm / 2.54
+                dpi <- st$export$dpi
+                type <- toupper(st$export$type)
+                
+                withCallingHandlers({
+                    if (type == "PNG") {
+                        ragg::agg_png(file, width = w, height = h, units = "in", res = dpi)
+                        print(p)
+                        dev.off()
+                        
+                    } else if (type == "PDF") {
+                        grDevices::pdf(file, width = w, height = h)
+                        print(p)
+                        dev.off()
+                        
+                    } else if (type == "SVG") {
+                        grDevices::svg(file, width = w, height = h)
+                        print(p)
+                        dev.off()
+                        
+                    } else {
+                        # fallback
+                        ragg::agg_png(file, width = w, height = h, units = "in", res = dpi)
+                        print(p)
+                        dev.off()
+                    }
+                }, error = function(e) {
+                    showNotification(paste("Export failed:", e$message), type = "error")
+                })
+            }
+        )
+    })
 }
