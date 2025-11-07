@@ -8,18 +8,86 @@ mod_plot_ui <- function(id) {
 }
 
 mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
-  moduleServer(id, function(input, output, session) {
 
-    plot_reactive <- reactive({
-      req(data_r(), mapping_r()$x)
-      df <- data_r()
-      x <- mapping_r()$x
-      y <- mapping_r()$y
-      col <- mapping_r()$color
-      facet_row <- mapping_r()$facet_row
-      facet_col <- mapping_r()$facet_col
-      ptype <- plottype_r()
-      st <- style_r()
+    moduleServer(id, function(input, output, session) {
+        
+        plot_reactive <- reactive({
+            req(data_r(), mapping_r()$x)
+            df <- data_r()
+            x <- mapping_r()$x
+            y <- mapping_r()$y
+            col <- mapping_r()$color
+            facet_row <- mapping_r()$facet_row
+            facet_col <- mapping_r()$facet_col
+            ptype <- plottype_r()
+            st <- style_r()
+            
+            # build aes depending on presence of color and y
+            if (!is.null(col) && !is.null(y)) {
+                aes_args <- aes_string(x = x, y = y, color = col)
+            } else if (!is.null(col) && is.null(y)) {
+                aes_args <- aes_string(x = x, fill = col)
+            } else if (is.null(col) && !is.null(y)) {
+                aes_args <- aes_string(x = x, y = y)
+            } else {
+                aes_args <- aes_string(x = x)
+            }
+            
+            p <- switch(ptype,
+                        "Scatter" = {
+                            p0 <- ggplot(df, aes_string(x = x, y = y, color = col))
+                            p0 <- p0 + geom_point()
+                            if (isTRUE(mapping_r()$show_regline)) {
+                                method <- mapping_r()$reg_method
+                                if (is.null(method) || method == "") method <- "lm"
+                                p0 <- p0 + geom_smooth(method = method, se = isTRUE(mapping_r()$show_conf))
+                            }
+                            p0
+                        },
+                        "Boxplot" = {
+                            req(y)
+                            p0 <- ggplot(df, aes_string(x = x, y = y, color = col)) + geom_boxplot(outlier.shape = NA)
+                            if (isTRUE(mapping_r()$show_jitter)) {
+                                p0 <- p0 + geom_jitter(width = 0.15, size = mapping_r()$jitter_size, alpha = 0.6)
+                            }
+                            p0
+                        },
+                        "Violin" = {
+                            req(y)
+                            p0 <- ggplot(df, aes_string(x = x, y = y, fill = col)) + geom_violin(trim = FALSE)
+                            if (isTRUE(mapping_r()$show_jitter)) {
+                                p0 <- p0 + geom_jitter(width = 0.15, size = mapping_r()$jitter_size, alpha = 0.6)
+                            }
+                            p0
+                        },
+                        "Histogram" = {
+                            ggplot(df, aes_string(x = x, fill = col)) + geom_histogram(bins = 30, alpha = 0.8)
+                        },
+                        "Bar" = {
+                            ggplot(df, aes_string(x = x, fill = col)) + geom_bar(position = "dodge")
+                        },
+                        "Line" = {
+                            req(y)
+                            ggplot(df, aes_string(x = x, y = y, color = col, group = col)) + geom_line() + geom_point()
+                        },
+                        "Tile" = {
+                            if (is.null(y)) stop("Tile plot needs a Y variable")
+                            df %>%
+                                select(all_of(c(x, y, col))) %>%
+                                na.omit() %>%
+                                ggplot(aes_string(x = x, y = y, fill = col)) + geom_tile()
+                        },
+                        ggplot(df, aes_args) + geom_point()
+            )
+            
+            # facets (use facet_grid with formula)
+            if (!is.null(facet_row) || !is.null(facet_col)) {
+                fr <- if (!is.null(facet_row)) facet_row else "."
+                fc <- if (!is.null(facet_col)) facet_col else "."
+                fmla <- paste0(fr, " ~ ", fc)
+                p <- p + facet_grid(as.formula(fmla))
+            }
+            
             # theme and text sizes (axis title/text sizes apply to text only)
             if (isTRUE(st$theme_enabled) && !is.null(st$theme)) {
                 theme_fun <- match.fun(st$theme)
@@ -33,92 +101,6 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                                axis.text = element_text(size = st$axis_text_size))
             }
 
-      aes_args <- if (!is.null(col)) aes_string(x = x, y = y, color = col) else aes_string(x = x, y = y)
-
-      # build base plot by type
-      p <- switch(ptype,
-                  "Scatter" = {
-                  # add regression line
-                  p0 <- ggplot(df, aes_string(x = x, y = y, color = col))
-                  p0 <- p0 + geom_point()
-                  if (isTRUE(mapping_r()$show_regline)) {
-                      method <- mapping_r()$reg_method
-                      if (is.null(method) || method == "") method <- "lm"
-                      p0 <- p0 + geom_smooth(method = method, se = isTRUE(mapping_r()$show_conf))
-                  }
-                  p0
-                  },
-                  "Boxplot" = {
-                    if (is.null(y)) stop("Boxplot needs a Y variable")
-                    ggplot(df, aes_string(x = x, y = y, color = col)) + geom_boxplot(outlier.shape = NA) + geom_jitter(width = 0.15, height = 0, alpha = 0.6)
-                  },
-                  "Histogram" = {
-                    if (is.null(x)) stop("Histogram needs X variable") 
-                    ggplot(df, aes_string(x = x, fill = col)) + geom_histogram(bins = 30, alpha = 0.8)
-                  },
-                  "Bar" = {
-                    # treat x as categorical
-                    ggplot(df, aes_string(x = x, fill = col)) + geom_bar(position = "dodge")
-                  },
-                  "Line" = {
-                    # group by color if present or by x otherwise
-                    grp <- if (!is.null(col)) col else NULL
-                    ggplot(df, aes_string(x = x, y = y, color = col, group = grp)) + geom_line() + geom_point()
-                  },
-                  "Tile" = {
-                    if (is.null(y)) stop("Tile plot needs a Y variable")
-                      df %>%
-                          select(all_of(c(x, y, col))) %>%
-                          na.omit() %>%
-                            ggplot(aes_string(x = x, y = y, fill = col)) + geom_tile()
-                  },
-                  ggplot(df, aes_args) + geom_point()
-      )
-
-      # facets
-      if (!is.null(facet_row) || !is.null(facet_col)) {
-        fr <- if (!is.null(facet_row)) paste0("vars(`", facet_row, "`)") else "."
-        fc <- if (!is.null(facet_col)) paste0("vars(`", facet_col, "`)") else "."
-        # safer: use facet_grid with formula
-        fmla <- paste0(facet_row %||% ".", " ~ ", facet_col %||% ".")
-        p <- p + facet_grid(as.formula(fmla))
-      }
-
-      # color scales
-      if (!is.null(col)) {
-        # detect if color is numeric
-        if (is.numeric(df[[col]])) {
-          if (st$colorscale == "Viridis") {
-            p <- p + viridis::scale_color_viridis(option = "D")
-            if (ptype %in% c("Histogram","Bar")) p <- p + viridis::scale_fill_viridis(option = "D")
-          } else if (st$colorscale == "Manual") {
-            # manual palette provided as comma-separated hex codes
-            pal <- strsplit(st$manual_palette, ",")[[1]]
-            pal <- trimws(pal)
-            if (length(pal) > 0) p <- p + scale_color_manual(values = pal)
-          }
-        } else {
-          # discrete
-          if (st$colorscale == "Viridis") {
-            p <- p + viridis::scale_color_viridis_d()
-            if (ptype %in% c("Histogram","Bar")) p <- p + viridis::scale_fill_viridis_d()
-          } else if (st$colorscale == "Manual") {
-            pal <- strsplit(st$manual_palette, ",")[[1]]
-            pal <- trimws(pal)
-            if (length(pal) > 0) p <- p + scale_color_manual(values = pal)
-            if (ptype %in% c("Histogram","Bar")) p <- p + scale_fill_manual(values = pal)
-          }
-        }
-      } else {
-        # no color mapping, maybe user wants default manual color
-        if (st$colorscale == "Manual") {
-          pal <- strsplit(st$manual_palette, ",")[[1]]
-          pal <- trimws(pal)
-          if (length(pal) >= 1) p <- p + scale_color_manual(values = pal[1])
-        }
-      }
-
-      p
             # labels
             if (isTRUE(st$labels_enabled)) {
                 labs_args <- list()

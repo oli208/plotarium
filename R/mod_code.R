@@ -7,54 +7,50 @@ mod_code_ui <- function(id) {
 }
 
 mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
-  moduleServer(id, function(input, output, session) {
-    code_text <- reactive({
-      req(mapping_r()$x)
-      dfname <- "data"
-      x <- mapping_r()$x
-      y <- mapping_r()$y
-      col <- mapping_r()$color
-      fr <- mapping_r()$facet_row
-      fc <- mapping_r()$facet_col
-      ptype <- plottype_r()
-      st <- style_r()
-
-      lines <- c("library(ggplot2)", "# assume 'data' contains your dataframe")
-      aes_line <- if (!is.null(col)) paste0("aes(x = ", x, ", y = ", y, ", color = ", col, ")") else paste0("aes(x = ", x, ", y = ", y, ")")
-      geom_line <- switch(ptype,
-                          "Scatter" = "geom_point()",
-                          "Boxplot" = "geom_boxplot() + geom_jitter(width = 0.15)",
-                          "Histogram" = paste0("geom_histogram(bins = 30)"),
-                          "Bar" = "geom_bar(position = \"dodge\")",
-                          "Line" = "geom_line() + geom_point()",
-                          "Tile" = "geom_tile()",
-                          "geom_point()")
-      lines <- c(lines, paste0("p <- ggplot(", dfname, ", ", aes_line, ") + ", geom_line))
-      
-      # regression
-      if (ptype == "Scatter" && isTRUE(mapping_r()$show_regline)) {
-          method <- mapping_r()$reg_method
-          if (is.null(method) || method == "") method <- "lm"
-          lines <- c(lines, paste0("p <- p + geom_smooth(method = '", method, "', se = ", ifelse(isTRUE(mapping_r()$show_conf), "TRUE", "FALSE"), ")"))
-      }
-      
-      # facets
-  #    if (!is.null(fr) || !is.null(fc)) {
-  #      fmla <- paste0(fr %||% ".", " ~ ", fc %||% ".")
-  #      lines <- c(lines, paste0("p <- p + facet_grid(", "", fmla, """)))
-  #    }
-      # color scale notes
-      if (!is.null(col)) {
-        if (st$colorscale == "Viridis") {
-          lines <- c(lines, "# apply viridis scale: scale_color_viridis() or scale_fill_viridis() for fill aesthetics")
-        } else if (st$colorscale == "Manual") {
-          lines <- c(lines, paste0("# manual palette specified: ", st$manual_palette))
-          lines <- c(lines, "# use scale_color_manual(values = c(...)) or scale_fill_manual(...) as needed")
-        }
-      }
-      lines <- c(lines, "print(p)", "# ggsave('figure.png', p, width=6, height=4, dpi=300)")
-      paste(lines, collapse = "\n")
+    moduleServer(id, function(input, output, session) {
+        code_text <- reactive({
+            req(mapping_r()$x)
+            dfname <- "data"
+            x <- mapping_r()$x
+            y <- mapping_r()$y
+            col <- mapping_r()$color
+            fr <- mapping_r()$facet_row
+            fc <- mapping_r()$facet_col
+            ptype <- plottype_r()
+            st <- style_r()
+            
+            lines <- c("library(ggplot2)", "# assume 'data' contains your dataframe")
+            aes_line <- if (!is.null(col) && !is.null(y)) paste0("aes(x = ", x, ", y = ", y, ", color = ", col, ")") else if (!is.null(col) && is.null(y)) paste0("aes(x = ", x, ", fill = ", col, ")") else if (!is.null(y)) paste0("aes(x = ", x, ", y = ", y, ")") else paste0("aes(x = ", x, ")")
+            geom_line <- switch(ptype,
+                                "Scatter" = "geom_point()" ,
+                                "Boxplot" = "geom_boxplot() + geom_jitter(width = 0.15)",
                                 "Violin" = "geom_violin(trim = FALSE)",
+                                "Histogram" = "geom_histogram(bins = 30)" ,
+                                "Bar" = "geom_bar(position = \"dodge\")",
+                                "Line" = "geom_line() + geom_point()",
+                                "geom_point()")
+            lines <- c(lines, paste0("p <- ggplot(", dfname, ", ", aes_line, ") + ", geom_line))
+            
+            # regression
+            if (ptype == "Scatter" && isTRUE(mapping_r()$show_regline)) {
+                method <- mapping_r()$reg_method
+                if (is.null(method) || method == "") method <- "lm"
+                lines <- c(lines, paste0("p <- p + geom_smooth(method = '", method, "', se = ", ifelse(isTRUE(mapping_r()$show_conf), "TRUE", "FALSE"), ")"))
+            }
+            
+            # jitter for box/violin
+            if (ptype %in% c("Boxplot","Violin") && isTRUE(mapping_r()$show_jitter)) {
+                lines <- c(lines, paste0("p <- p + geom_jitter(width = 0.15, size = ", mapping_r()$jitter_size, ", alpha = 0.6)"))
+            }
+            
+            # facets
+            if (!is.null(fr) || !is.null(fc)) {
+                frs <- if (!is.null(fr)) fr else "."
+                fcs <- if (!is.null(fc)) fc else "."
+                fmla <- paste0(frs, " ~ ", fcs)
+                lines <- c(lines, paste0("p <- p + facet_grid(", "", fmla, "") )
+            }
+            
             # theme and labels (axis sizes)
             lines <- c(lines, paste0("p <- p + theme_minimal() + theme(axis.title = element_text(size = ", style_r()$axis_title_size, "), axis.text = element_text(size = ", style_r()$axis_text_size, "))"))
             if (isTRUE(st$labels_enabled)) {

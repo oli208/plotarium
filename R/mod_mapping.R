@@ -43,7 +43,9 @@ mod_mapping_server <- function(id, data_r) {
             facet_col = if (is.null(input$facet_col) || input$facet_col == "None") NULL else input$facet_col,
             show_regline = isTRUE(input$show_regline),
             reg_method = input$reg_method,
-            show_conf = isTRUE(input$show_conf)
+            show_conf = isTRUE(input$show_conf),
+            show_jitter = isTRUE(input$show_jitter),
+            jitter_size = input$jitter_size
         ))
     })
 }
