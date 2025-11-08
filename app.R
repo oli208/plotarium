@@ -24,7 +24,10 @@ source("R/mod_export.R")
 ui <- fluidPage(
       theme = bs_theme(bootswatch = "yeti", primary = "#0E1E37"),
       tags$head(
-          tags$link(rel = "stylesheet", type = "text/css", href = "plotarium.css")
+          tags$link(rel = "stylesheet", type = "text/css", href = "plotarium.css"),
+          tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
+          tags$script(src = "plotarium.js")
+          
       ),
      div(class = "app-wrapper",
         div(class = "header-row",
@@ -77,7 +80,15 @@ ui <- fluidPage(
 tags$footer(
     HTML("For more info visit 
            <a href='https://github.com/oli208/plotarium' target='_blank'>
-           plotarium on github</a> | &copy; 2025")
+           plotarium on github</a> | &copy; 2025"), 
+    # Floating theme toggle
+    tags$button(
+        id = "themeToggle",
+        class = "theme-toggle-btn theme-floating",
+        title = "Toggle Light/Dark Mode",
+        tags$i(class = "theme-icon")
+    ),
+    
 )
 )
 )

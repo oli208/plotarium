@@ -1,0 +1,346 @@
+/* ========================================
+   PLOTARIUM THEME (Space & Light Dual Mode)
+   ======================================== */
+
+/* --- Theme Variables (Default: Dark Mode) --- */
+:root {
+  /* Core Colors */
+  --color-bg-main: #0b1e34;
+  --color-bg-secondary: #0E1E37;
+  --color-accent: #1f77b4;
+  --color-accent-light: #8ecae6;
+  --color-text-main: #e0e6ed;
+  --color-text-bright: #ffffff;
+
+  /* Borders & Shadows */
+  --color-border: rgba(255, 255, 255, 0.15);
+  --shadow-main: 0 0 25px rgba(31, 119, 180, 0.4);
+  --shadow-hover: 0 0 25px rgba(31, 119, 180, 0.6);
+  --shadow-plot: 0 0 12px rgba(31, 119, 180, 0.25);
+
+  /* Transparency Layers */
+  --frosted-bg: rgba(11, 23, 43, 0.7);
+  --overlay-star-opacity: 1;
+  --overlay-star-blend: multiply;
+
+  /* Typography */
+  --font-main: 'Inter', sans-serif;
+  --font-title: 'Orbitron', sans-serif;
+}
+
+/* --- Light Mode Theme --- */
+:root[data-theme="light"] {
+  --color-bg-main: #f8fafc;
+  --color-bg-secondary: #ffffff;
+  --color-accent: #268bd2;
+  --color-accent-light: #1f77b4;
+  --color-text-main: #1a1a1a;
+  --color-text-bright: #0E1E37;
+
+  --color-border: rgba(0, 0, 0, 0.15);
+  --shadow-main: 0 0 20px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 0 25px rgba(0, 0, 0, 0.15);
+  --shadow-plot: 0 0 8px rgba(0, 0, 0, 0.1);
+
+  --frosted-bg: rgba(255, 255, 255, 0.7);
+  --overlay-star-opacity: 0.05;
+  --overlay-star-blend: normal;
+}
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --- Body & Background --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-main);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+}
+
+/* Starfield layer (dark mode only) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('stars_bg.png') repeat;
+  opacity: var(--overlay-star-opacity);
+  animation: driftStars 2500s linear infinite;
+  z-index: -1;
+  background-color: #0b022b78;
+  background-blend-mode: var(--overlay-star-blend);
+}
+
+@keyframes driftStars {
+  from { background-position: 0 0; }
+  to { background-position: 10000px 5000px; }
+}
+
+/* --- Header --- */
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-accent-light);
+  text-shadow: 0 0 10px rgba(31, 119, 180, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-title {
+  font-family: var(--font-title);
+  font-size: 26px;
+  letter-spacing: 1.5px;
+  color: var(--color-accent-light);
+}
+
+.header-logos img {
+  height: 40px;
+}
+
+/* --- Panels Layout --- */
+.app-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-panels {
+  display: flex;
+  gap: 1.25%;
+  flex: 1;
+  padding: 16px;
+  align-items: stretch;
+  height: calc(100vh - 160px);
+}
+
+.main-panels > .panel-left  { flex: 0 0 24% !important; max-width: 24% !important; }
+.main-panels > .panel-center { flex: 0 0 50% !important; max-width: 50% !important; }
+.main-panels > .panel-right { flex: 0 0 24% !important; max-width: 24% !important; }
+
+.main-panels .panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* --- Frosted Glass Panels --- */
+.well {
+  background: var(--frosted-bg);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-bright);
+  box-shadow: var(--shadow-main);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  transition: all 0.3s ease;
+  background-blend-mode: multiply;
+}
+
+.well:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* --- Plot Container --- */
+.plot-output, .shiny-plot-output, .plotly, .plot-container {
+  background: transparent !important;
+  padding-top: 8px;
+}
+
+.plotly .js-plotly-plot, .plotly > div {
+  background: transparent !important;
+}
+
+.plot-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-plot);
+  border-radius: 12px;
+}
+
+/* --- Tabs --- */
+.nav-tabs > li > a,
+.nav-tabs .nav-link {
+  background-color: transparent !important;
+  color: var(--color-accent-light);
+  border: none;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs .nav-link.active {
+  color: var(--color-text-bright) !important;
+  border-bottom: 2px solid var(--color-accent) !important;
+  background-color: rgba(31, 119, 180, 0.2) !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--color-accent) !important;
+  border: none;
+}
+
+/* --- Inputs & Buttons --- */
+select, input, .form-control, .selectize-input.full, .selectize-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+select:focus, input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 5px var(--color-accent);
+  outline: none;
+}
+
+.btn {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-bright);
+  border: none;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--color-accent);
+  box-shadow: var(--shadow-hover);
+}
+
+/* --- Footer --- */
+footer {
+  margin-top: auto;
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-accent-light);
+  text-align: center;
+  font-size: 12px;
+  padding: 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+}
+
+/* --- Misc --- */
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+a {
+  color: var(--color-accent-light);
+  transition: 0.2s;
+}
+a:hover {
+  color: var(--color-accent);
+}
+
+
+
+
+/* ===============================
+   Floating Theme Toggle
+   =============================== */
+
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 2000;
+}
+
+.theme-floating {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--color-bg-secondary);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.theme-floating:hover {
+  transform: scale(1.1);
+  background: var(--color-accent);
+  box-shadow: 0 0 20px rgba(31, 119, 180, 0.6);
+}
+
+/* Icon design */
+.theme-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  box-shadow: 0 0 5px var(--color-accent-light);
+  transition: all 0.4s ease;
+}
+
+/* Crescent moon for dark mode */
+.theme-icon::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--color-bg-secondary);
+  transform: translateX(6px);
+  transition: transform 0.4s ease, background 0.4s ease;
+}
+
+/* Sun icon for light mode */
+.theme-toggle-btn.light-mode .theme-icon {
+  background: #fdd835;
+  box-shadow: 0 0 8px #fdd835;
+}
+
+.theme-toggle-btn.light-mode .theme-icon::before {
+  transform: translateX(-6px);
+  background: var(--color-bg-main);
+}
+
+/* Optional animation (spin + fade) */
+.theme-toggle-btn:active .theme-icon {
+  transform: rotate(180deg) scale(0.9);
+  opacity: 0.8;
+}
+
+
+
+
+/* --- Responsive Layout --- */
+@media (max-width: 892px) {
+  .main-panels {
+    flex-direction: column;
+    height: auto;
+  }
+}
