@@ -117,6 +117,34 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                 p <- p + theme(legend.position = "none")
             }
             
+            # color scales
+            if (!is.null(col)) {
+                # numeric vs discrete
+                if (is.numeric(df[[col]])) {
+                    if (st$colorscale == "Viridis") {
+                        p <- p + scale_color_viridis(option = "D")
+                        if (ptype %in% c("Histogram","Bar")) p <- p + scale_fill_viridis(option = "D")
+                    } else if (st$colorscale == "Manual") {
+                        pal <- strsplit(st$manual_palette, ",")[[1]]
+                        pal <- trimws(pal)
+                        if (length(pal) > 0) p <- p + scale_color_manual(values = pal)
+                    }
+                } else {
+                    # discrete
+                    if (st$colorscale == "Viridis") {
+                        p <- p + scale_color_viridis_d()
+                        if (ptype %in% c("Histogram","Bar")) p <- p + scale_fill_viridis_d()
+                    } else if (st$colorscale == "Manual") {
+                        pal <- strsplit(st$manual_palette, ",")[[1]]
+                        pal <- trimws(pal)
+                        if (length(pal) > 0) p <- p + scale_color_manual(values = pal)
+                        if (ptype %in% c("Histogram","Bar")) p <- p + scale_fill_manual(values = pal)
+                    }
+                }
+            }
+            
+            p
+        })
         
         output$plot <- renderPlot({
             p <- plot_reactive()
@@ -136,3 +164,4 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
         return(plot_reactive)
     })
 }
+
