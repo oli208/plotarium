@@ -1,0 +1,4 @@
+Name: Launch Plotarium
+Description: Start the Plotarium app
+Binding: run_plotarium
+Interactive: true
