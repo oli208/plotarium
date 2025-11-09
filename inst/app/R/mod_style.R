@@ -1,3 +1,4 @@
+# plotarium
 mod_style_ui <- function(id) {
     ns <- NS(id)
     tagList(

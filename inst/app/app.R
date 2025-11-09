@@ -8,17 +8,18 @@ library(colourpicker)
 library(viridis)
 library(dplyr)
 library(bslib)
+library(clipr)    # for copying code to clipboard (optional)
 
 options(shiny.maxRequestSize = 100*1024^2)  # 100 MB limit
 
 
 # source modules
-source("R/mod_data.R")
-source("R/mod_mapping.R")
-source("R/mod_plot.R")
-source("R/mod_style.R")
-source("R/mod_code.R")
-source("R/mod_export.R")
+source(file.path('R','mod_data.R'))
+source(file.path('R','mod_mapping.R'))
+source(file.path('R','mod_plot.R'))
+source(file.path('R','mod_style.R'))
+source(file.path('R','mod_code.R'))
+source(file.path('R','mod_export.R'))
 
 
 ui <- fluidPage(
@@ -27,7 +28,7 @@ ui <- fluidPage(
           tags$link(rel = "stylesheet", type = "text/css", href = "plotarium.css"),
           tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
           tags$script(src = "plotarium.js")
-          
+
       ),
      div(class = "app-wrapper",
         div(class = "header-row",
@@ -36,7 +37,7 @@ ui <- fluidPage(
                     img(src = "logo_plotarium_v2.png", alt = "Logo")
 
             )
-        ),     
+        ),
         div(class = "app-body",
 
             div(class = "main-panels",
@@ -45,9 +46,9 @@ ui <- fluidPage(
                         h4("Data & Mapping"),
                         mod_data_ui("data"),
                         hr(),
-                        selectInput("plottype", "Plot type:", 
+                        selectInput("plottype", "Plot type:",
                                     choices = c("Scatter", "Boxplot", "Violin", "Histogram", "Bar", "Line", "Tile")),
-                        
+
                         mod_mapping_ui("map"),
                         conditionalPanel(
                             condition = "input.convert_var == true",
@@ -55,7 +56,7 @@ ui <- fluidPage(
                         ),
                         checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         checkboxInput("lazy_render", "Enable lazy rendering for large data (>10k rows)", value = TRUE)
-                        
+
                     )
                 ),
                 div(class = "panel panel-center",
@@ -79,9 +80,9 @@ ui <- fluidPage(
             )
 ),
 tags$footer(
-    HTML("For more info visit 
+    HTML("For more info visit
            <a href='https://github.com/oli208/plotarium' target='_blank'>
-           plotarium on github</a> | &copy; 2025"), 
+           plotarium on github</a> | &copy; 2025"),
     # Floating theme toggle
     tags$button(
         id = "themeToggle",
@@ -89,7 +90,7 @@ tags$footer(
         title = "Toggle Light/Dark Mode",
         tags$i(class = "theme-icon")
     ),
-    
+
 )
 )
 )
@@ -137,15 +138,15 @@ server <- function(input, output, session) {
   plot_r <- mod_plot_server("plot", data_for_mapping, mapping_r, reactive(input$plottype), style_r)
   mod_code_server("code", data_for_mapping, mapping_r, reactive(input$plottype), style_r)
   mod_export_server("export", plot_r, style_r)
-  
-  
+
+
   # render interactive plotly from the plot reactive
   output$plot_interactive <- plotly::renderPlotly({
       req(plot_r())
       plotly::ggplotly(plot_r(), height = 600)
   })
-  
-  
+
+
   output$data_preview <- DT::renderDataTable({
     req(data_for_mapping())
     head(data_for_mapping(), 100)
