@@ -8,7 +8,8 @@ library(colourpicker)
 library(viridis)
 library(dplyr)
 library(bslib)
-library(clipr)    # for copying code to clipboard (optional)
+library(colorBlindness)
+
 
 options(shiny.maxRequestSize = 100*1024^2)  # 100 MB limit
 

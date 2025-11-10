@@ -70,6 +70,8 @@ mod_style_server <- function(id) {
             colorscale = input$colorscale,
             manual_palette = input$manual_palette,
             facet_scales = input$facet_scales,
+            cb_sim = isTRUE(input$cb_sim),
+            cb_type = input$cb_type,
             export = list(type = input$export_type, width_cm = input$export_width_cm, height_cm = input$export_height_cm, dpi = input$export_dpi) # ,
             #        copy_code = input$copy_code
         ))

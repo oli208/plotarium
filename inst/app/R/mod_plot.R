@@ -147,10 +147,16 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                     }
                 }
             }
-            
+
+            # Color blind preview
+            if (!is.null(st$cb_sim) && isTRUE(st$cb_sim)) {
+                p <- colorBlindness::cvdPlot(p, layout = st$cb_type)
+            }
+
+
             p
         })
-        
+
         output$plot <- renderPlot({
             p <- plot_reactive()
             req(p)
