@@ -2,8 +2,8 @@ mod_plot_ui <- function(id) {
   ns <- NS(id)
   tagList(
     plotOutput(ns("plot"), height = "600px"),
-    br(),
-    downloadButton(ns("download"), "Download PNG (preview size)")
+  #  br(),
+  #  downloadButton(ns("download"), "Download PNG (preview size)")
   )
 }
 
@@ -162,16 +162,16 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
             req(p)
             print(p)
         })
-        
-        output$download <- downloadHandler(
-            filename = function() { paste0("plot_preview.png") },
-            content = function(file) {
-                ragg::agg_png(file, width = 8, height = 6, units = "in", res = 300)
-                print(plot_reactive())
-                dev.off()
-            }
-        )
-        
+
+        # output$download <- downloadHandler(
+        #     filename = function() { paste0("plot_preview.png") },
+        #     content = function(file) {
+        #         ragg::agg_png(file, width = 8, height = 6, units = "in", res = 300)
+        #         print(plot_reactive())
+        #         dev.off()
+        #     }
+        # )
+
         return(plot_reactive)
     })
 }
