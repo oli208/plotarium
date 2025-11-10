@@ -33,6 +33,20 @@ mod_style_ui <- function(id) {
             textInput(ns("manual_palette"), "Manual palette (comma-separated hex, e.g. #1f78b4,#33a02c)", value = "#1f78b4,#33a02c,#e31a1c")
         ),
         hr(),
+    #    conditionalPanel("input.facet_row != 'None' || input.facet_col != 'None'",
+        selectInput(ns("facet_scales"), "Facet scales:", choices = c("fixed","free"), selected = "fixed"),
+   #     ),
+        hr(),
+
+        # color blind check
+        checkboxInput(ns("cb_sim"), "Enable color blindness preview", value = FALSE),
+        conditionalPanel("input.cb_sim == true", ns = ns,
+                         selectInput(ns("cb_type"), "Type of color blindness:",
+                                     choices = c("deuteranope","protanope","desaturate"),
+                                     selected = "deuteranope")
+        ),
+
+        hr(),
         h5("Export Settings"),
         selectInput(ns("export_type"), "File type:", choices = c("PNG", "PDF", "SVG"), selected = "PNG"),
         numericInput(ns("export_width_cm"), "Width (cm):", value = 15, min = 1),
@@ -55,6 +69,7 @@ mod_style_server <- function(id) {
             legend_enabled = isTRUE(input$legend_cb),
             colorscale = input$colorscale,
             manual_palette = input$manual_palette,
+            facet_scales = input$facet_scales,
             export = list(type = input$export_type, width_cm = input$export_width_cm, height_cm = input$export_height_cm, dpi = input$export_dpi) # ,
             #        copy_code = input$copy_code
         ))

@@ -10,7 +10,7 @@ mod_plot_ui <- function(id) {
 mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
 
     moduleServer(id, function(input, output, session) {
-        
+
         plot_reactive <- reactive({
             req(data_r(), mapping_r()$x)
             df <- data_r()
@@ -21,7 +21,7 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
             facet_col <- mapping_r()$facet_col
             ptype <- plottype_r()
             st <- style_r()
-            
+
             # build aes depending on presence of color and y
             if (!is.null(col) && !is.null(y)) {
                 aes_args <- aes_string(x = x, y = y, color = col)
@@ -32,7 +32,7 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
             } else {
                 aes_args <- aes_string(x = x)
             }
-            
+
             p <- switch(ptype,
                         "Scatter" = {
                             p0 <- ggplot(df, aes_string(x = x, y = y, color = col))
@@ -79,15 +79,20 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                         },
                         ggplot(df, aes_args) + geom_point()
             )
-            
+
             # facets (use facet_grid with formula)
             if (!is.null(facet_row) || !is.null(facet_col)) {
                 fr <- if (!is.null(facet_row)) facet_row else "."
                 fc <- if (!is.null(facet_col)) facet_col else "."
                 fmla <- paste0(fr, " ~ ", fc)
-                p <- p + facet_grid(as.formula(fmla))
+
+                if (!is.null(st$facet_scales) && st$facet_scales == "free") {
+                    p <- p + facet_grid(as.formula(fmla), scales = "free")
+                } else {
+                    p <- p + facet_grid(as.formula(fmla), scales = "fixed")
+                }
             }
-            
+
             # theme and text sizes (axis title/text sizes apply to text only)
             if (isTRUE(st$theme_enabled) && !is.null(st$theme)) {
                 theme_fun <- match.fun(st$theme)
@@ -95,7 +100,7 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
             } else {
                 p <- p + theme_minimal()
             }
-            
+
             if(isTRUE(st$axis_text_sizes_enabled)){
                 p <- p + theme(axis.title = element_text(size = st$axis_title_size),
                                axis.text = element_text(size = st$axis_text_size))
@@ -109,14 +114,14 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                 if (!is.null(st$labels$y) && nzchar(st$labels$y)) labs_args$y <- st$labels$y
                 if (length(labs_args) > 0) p <- p + do.call(ggplot2::labs, labs_args)
             }
-            
+
             # legend
             if (isTRUE(st$legend_enabled) && !is.null(st$legend_pos)) {
                 p <- p + theme(legend.position = st$legend_pos)
             } else {
                 p <- p + theme(legend.position = "none")
             }
-            
+
             # color scales
             if (!is.null(col)) {
                 # numeric vs discrete
