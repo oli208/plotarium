@@ -51,11 +51,11 @@ ui <- fluidPage(
                                     choices = c("Scatter", "Boxplot", "Violin", "Histogram", "Bar", "Line", "Tile")),
 
                         mod_mapping_ui("map"),
+                        checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         conditionalPanel(
                             condition = "input.convert_var == true",
                             uiOutput("convert_ui")
                         ),
-                        checkboxInput("convert_var", "Convert numeric variable to categorical", value = FALSE),
                         checkboxInput("lazy_render", "Enable lazy rendering for large data (>10k rows)", value = TRUE)
 
                     )
