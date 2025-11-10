@@ -49,8 +49,8 @@ mod_style_ui <- function(id) {
         hr(),
         h5("Export Settings"),
         selectInput(ns("export_type"), "File type:", choices = c("PNG", "PDF", "SVG"), selected = "PNG"),
-        numericInput(ns("export_width_cm"), "Width (cm):", value = 15, min = 1),
-        numericInput(ns("export_height_cm"), "Height (cm):", value = 10, min = 1),
+        numericInput(ns("export_width_cm"), "Width (cm):", value = 20, min = 1),
+        numericInput(ns("export_height_cm"), "Height (cm):", value = 15, min = 1),
         numericInput(ns("export_dpi"), "DPI:", value = 300, min = 72)
     )
 }
