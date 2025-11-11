@@ -378,6 +378,39 @@ input[type="text"]:focus, textarea:focus {
   box-shadow: 0 0 8px var(--color-accent);
 }
 
+/* ===============================
+   TABLES STYLING
+   =============================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text-main) !important;
+  background-color: var(--color-bg-secondary) !important;
+}
+
+th, td {
+  border: 1px solid var(--color-border) !important;
+}
+
+th {
+  background-color: rgba(31, 119, 180, 0.15) !important;
+  color: var(--color-accent-light) !important;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+tr:hover {
+  background-color: rgba(31, 119, 180, 0.25) !important;
+}
+
+.table > :not(caption) > * > *{
+      color: var(--color-text-main) !important;
+  background-color: var(--color-bg-secondary) !important;
+
+}
+
 
 
 
