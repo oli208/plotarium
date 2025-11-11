@@ -333,6 +333,51 @@ a:hover {
   transform: rotate(180deg) scale(0.9);
   opacity: 0.8;
 }
+/* ===============================
+   INTERACTION ELEMENTS
+   =============================== */
+
+/* --- Select Inputs --- */
+select, .selectize-input, .form-control {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-main) !important;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+select:focus, .selectize-input.focus, .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 6px var(--color-accent);
+  outline: none;
+}
+
+.selectize-dropdown, .selectize-dropdown-content {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+}
+
+.selectize-dropdown [data-selectable]:hover {
+  background-color: rgba(31, 119, 180, 0.3);
+  color: var(--color-text-bright);
+}
+
+/* --- Text Inputs while typing --- */
+input[type="text"], textarea {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+input[type="text"]:focus, textarea:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+}
+
 
 
 
