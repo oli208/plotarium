@@ -27,7 +27,7 @@ mod_code_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                                 "Violin" = "geom_violin(trim = FALSE)",
                                 "Histogram" = "geom_histogram(bins = 30)" ,
                                 "Bar" = "geom_bar(position = \"dodge\")",
-                                "Line" = "geom_line() + geom_point()",
+                                "Line" = "geom_line()",
                                 "geom_point()")
             lines <- c(lines, paste0("p <- ggplot(", dfname, ", ", aes_line, ") + ", geom_line))
 
