@@ -11,3 +11,7 @@ Upload your dataset, choose variables, customize your plot, and export both the 
 ## ✨ Features
 * **Multiple plot types** – Scatter, Boxplot, Histogram, Bar, and Line plots
 * **Flexible mappings** – Choose X, Y, Color, Facet Rows, and Facet Columns
+
+<img src="man/figures/preview_light_darkmode.png" width="80%" style="display: block; margin: auto;" />
+
+
