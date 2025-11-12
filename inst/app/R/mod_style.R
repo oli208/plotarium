@@ -20,6 +20,21 @@ mod_style_ui <- function(id) {
             sliderInput(ns("axis_title_size"), "Axis title size", min = 8, max = 30, value = 16),
             sliderInput(ns("axis_text_size"), "Axis text size", min = 6, max = 24, value = 12)
         ),
+        # geom sizes
+        checkboxInput(ns("geom_sizes_cb"), "Change Point/Line size", value = FALSE),
+        conditionalPanel("input.geom_sizes_cb == true",
+            ns = ns,
+            conditionalPanel(
+                            "input.plottype == 'Line'",
+                            sliderInput(ns('line_width'),'Line width', min=0.5, max=4, value=1)
+
+            ),
+            conditionalPanel(
+                            "input.plottype == 'Scatter'",
+                            sliderInput(ns('point_size'),'Point size', min=0.5, max=8, value=2)
+                        )
+        ),
+
         checkboxInput(ns("legend_cb"), "Legend position", value = TRUE),
         conditionalPanel("input.legend_cb == true",
             ns = ns,

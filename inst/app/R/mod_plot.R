@@ -36,7 +36,8 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
             p <- switch(ptype,
                         "Scatter" = {
                             p0 <- ggplot(df, aes_string(x = x, y = y, color = col))
-                            p0 <- p0 + geom_point()
+                            p0 <- p0 + geom_point(size = if (isTRUE(st$geom_sizes_enabled)) st$point_size else 2)
+
                             if (isTRUE(mapping_r()$show_regline)) {
                                 method <- mapping_r()$reg_method
                                 if (is.null(method) || method == "") method <- "lm"
@@ -68,7 +69,8 @@ mod_plot_server <- function(id, data_r, mapping_r, plottype_r, style_r) {
                         },
                         "Line" = {
                             req(y)
-                            ggplot(df, aes_string(x = x, y = y, color = col, group = col)) + geom_line() + geom_point()
+                            ggplot(df, aes_string(x = x, y = y, color = col, group = col)) +
+                                geom_line(linewidth = if (isTRUE(st$geom_sizes_enabled)) st$line_width else 1)
                         },
                         "Tile" = {
                             if (is.null(y)) stop("Tile plot needs a Y variable")
