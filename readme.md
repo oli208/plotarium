@@ -15,3 +15,18 @@ Upload your dataset, choose variables, customize your plot, and export both the 
 <img src="man/figures/preview_light_darkmode.png" width="80%" style="display: block; margin: auto;" />
 
 
+## Installation
+
+### Install the development version from GitHub:
+
+``` install
+# Install devtools if not already installed
+install.packages("devtools")
+
+# Install plotarium from GitHub
+devtools::install_github("oli208/plotarium")
+```
+
+
+
+
