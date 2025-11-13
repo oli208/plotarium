@@ -2,10 +2,10 @@
 % Please edit documentation in R/run_app.R
 \name{run_plotarium}
 \alias{run_plotarium}
-\title{Launch Plotarium Addin}
+\title{Launch Plotarium App}
 \usage{
-run_plotarium()
+run_plotarium(launch.browser = TRUE, background = TRUE)
 }
 \description{
-Launch Plotarium Addin
+Launch Plotarium App
 }
