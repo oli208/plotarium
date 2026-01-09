@@ -6,6 +6,14 @@
 \usage{
 run_plotarium(launch.browser = TRUE, background = TRUE)
 }
+\arguments{
+\item{launch.browser}{Logical; if TRUE, the app will open in the default web browser.}
+
+\item{background}{Logical; if TRUE, the app will run in the background using the processx package.}
+}
+\value{
+None; the function launches the Shiny app.
+}
 \description{
-Launch Plotarium App
+This function launches the Plotarium Shiny application. It can be run in the background or foreground.
 }

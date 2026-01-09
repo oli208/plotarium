@@ -1,5 +1,18 @@
 #' Launch Plotarium App
+#'
+#' @description
+#' This function launches the Plotarium Shiny application. It can be run in the background or foreground.
+#'
+#' @param launch.browser Logical; if TRUE, the app will open in the default web browser.
+#' @param background Logical; if TRUE, the app will run in the background using the processx package.
+#' @return None; the function launches the Shiny app.
+#'
+#' @import shiny
+#' @importFrom processx process
+#'
 #' @export
+
+
 # run_plotarium <- function() {
 #   app_dir <- system.file("app", package = "plotarium")
 #   if (app_dir == "" || app_dir == ".") {
