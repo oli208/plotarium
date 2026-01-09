@@ -1,3 +1,20 @@
+#' Main app file for Plotarium Shiny application
+#'
+#' @import shiny
+#' @import ggplot2
+#' @import DT
+#' @import readr
+#' @import readxl
+#' @import ragg
+#' @import viridis
+#' @import dplyr
+#' @import bslib
+#' @import colorBlindness
+#' @import shinyjs
+#' @importFrom plotly ggplotly
+#' @import processx
+
+
 library(shiny)
 library(ggplot2)
 library(DT)
@@ -9,6 +26,7 @@ library(viridis)
 library(dplyr)
 library(bslib)
 library(colorBlindness)
+library(shinyjs)
 
 
 options(shiny.maxRequestSize = 100*1024^2)  # 100 MB limit
